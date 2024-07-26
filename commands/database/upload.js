@@ -57,7 +57,7 @@ module.exports = {
     const db = client.db("cardsdb");
 
     // Process each card
-    for (const cardElement of cardElements) {
+     for (const cardElement of cardElements) {
       const card = {};
 
       // Extract data from different components of the card
@@ -164,6 +164,11 @@ module.exports = {
           }
         });
 
+      if (card.type.includes('PENDULUM')) {
+        card.pendEffect = $(cardElement).find('.card_pendulum_effect_txt').text().replace(/\n/g, ' ').trim();
+        card.scale = $(cardElement).find(".scale_left_txt").text().trim();
+      }
+
       card.effect = $(cardElement)
         .find(".effect_txt")
         .html()
@@ -173,6 +178,7 @@ module.exports = {
         .replace(/<font[^>]*?>([^<]+)<\/font>/g, "$1")
         .trim();
       card.passcode = $(cardElement).find(".passcode_txt").text().trim();
+      card.set = setName;
       card.limit = 3;
 
       // Check if the card with the same name already exists in the database
