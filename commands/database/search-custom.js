@@ -72,7 +72,14 @@ async function writeTitle(card) {
 
 // Function to find the closest match in a subset of data
 async function createEmbed(card) {
+  cardEffect = ""
+  if (card.scale) {
+    arrowIcon = arrows['right']
+    cardEffect = `${arrowIcon} **Pendulum Effect**\n${card.pendEffect} \n\n${arrowIcon} **Monster Effect** \n${card.effect}`;
+  }
+  else {
   cardEffect = card.effect;
+  }
   cardEffect = `**Card Text**\n>>> ${cardEffect}`;
 
   if (card.cardtype == "Monster") {
@@ -115,7 +122,12 @@ async function createEmbed(card) {
     .setTitle(title)
     .setThumbnail(card.image)
     .setDescription(cardEffect)
-    .addFields({ name: "Banlist Status", value: card.limit.toString() });
+    .addFields({
+      name: "Banlist Status",
+      value: card.limit.toString(),
+      inline: true,
+    })
+    .addFields({ name: "Set:", value: card.set, inline: true });
   return cardEmbed;
 }
 
