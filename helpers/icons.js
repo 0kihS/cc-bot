@@ -38,11 +38,11 @@ subtypes = {
     'Rock'          : '<:rock_:1205661793003769856>',
     'Sea Serpent'   : '<:seaserpent:1205661901959462942>',
     'Spellcaster'   : '<:spellcaster:1205661930228809749>',
-    'Thunder'       : '<:thunder:938560996295974943>',
+    'Thunder'       : '<:thunder:1266409233084055632>',
     'Warrior'       : '<:warrior:1205658011536990268>',
-    'Winged Beast'  : '<:wingedbeast:938561787215896586>',
-    'Wyrm'          : '<:wyrm:938562276116545617>',
-    'Zombie'        : '<:zombie_:938562568480501781>',
+    'Winged Beast'  : '<:wingedbeast:1262444977460346912> ',
+    'Wyrm'          : '<:wyrm:1262445117172748289>',
+    'Zombie'        : '<:zombie_:1262445372958052503>',
     'Normal'        : '<:normal:938333369719218216>',
     'Continuous'    : '<:continuous:938333796560957480>',
     'Equip'         : '<:equip:938334072697139250>',
@@ -54,8 +54,8 @@ subtypes = {
 
 level = {
     'level'  : '<:level:1205651491021529149>',
-    'rank'   : '<:rank:938732149819973673>',
-    'scale'  : '<:scale:939016782369407026>',
+    'rank'   : '<:rank:1262444262168203374>',
+    'scale'  : '<:scale:1262444187161198654>',
     'rating' : '<:link_:1211768075255283742>'
 }
 

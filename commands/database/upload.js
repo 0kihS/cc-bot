@@ -4,6 +4,7 @@ const path = require("path");
 const cheerio = require("cheerio");
 const axios = require("axios");
 const { SlashCommandBuilder, PermissionFlagsBits } = require("discord.js");
+const { Element } = require("natural");
 require("dotenv");
 
 module.exports = {
@@ -16,11 +17,23 @@ module.exports = {
         .setName("cards")
         .setDescription("Attach a HTML file containing the card list.")
         .setRequired(true),
+    )
+    .addStringOption((option) =>
+      option
+        .setName("set")
+        .setDescription("name of the set the cards are in")
+        .setRequired(true),
     ),
   async execute(interaction) {
-    console.log("⏳ Initializing");
     const attachment = await interaction.options.getAttachment("cards");
-    console.log("✅ Attachment found");
+    if (interaction.options.getString("set")) {
+      setName = interaction.options.getString("set");
+    }
+    else {
+      setName = "Unknown";
+    }
+    
+    console.log("attachment found");
     const acknowledgementMessage = await interaction.reply({
       content: "Processing upload...",
       fetchReply: true, // Enable editing the message later
@@ -38,10 +51,11 @@ module.exports = {
     console.log("successfully uploaded file");
     const $ = cheerio.load(htmlContent);
 
+    // Find all cards with class 'cardfront'
     const cardElements = $(".cardfront:not(:first-child)");
 
+    // Connection URI for MongoDB (replace with your actual MongoDB URI)
     const uri = process.env.MONGODB_URI;
-    const dbName = "cardsdb";
 
     // Connect to MongoDB
     const client = new MongoClient(uri, {
@@ -53,11 +67,11 @@ module.exports = {
       },
     });
     client.connect(uri);
-    console.log("📤 Successfully connected, starting upload");
+    console.log("successfully connected");
     const db = client.db("cardsdb");
 
     // Process each card
-     for (const cardElement of cardElements) {
+    for (const cardElement of cardElements) {
       const card = {};
 
       // Extract data from different components of the card
@@ -99,33 +113,35 @@ module.exports = {
           link = $(cardElement).find(".link_txt").text().trim();
           card.level = parseInt(link);
         }
-        if (card.type.includes("XYZ")) {
+        else if (card.type.includes("XYZ")) {
           let highestLevel = 0;
           $(cardElement)
             .find(".rank")
             .each((index, element) => {
               const levelClass = $(element).attr("class");
               const match = levelClass.match(/rank(\d+)/);
-              if (match) {
-                const levelValue = parseInt(match[1]);
-                highestLevel = Math.max(highestLevel, levelValue);
-                card.level = highestLevel;
-              }
-            });
+              if (match && !($(element).attr("style").includes("display: none;"))) {
+                  highestLevel++;
+                  console.log(card.name + " " + highestLevel);
+                }
+              });
+              card.level = highestLevel;
         }
+        else {
         let highestLevel = 0;
         $(cardElement)
           .find(".level")
           .each((index, element) => {
             const levelClass = $(element).attr("class");
             const match = levelClass.match(/level(\d+)/);
-            if (match) {
-              const levelValue = parseInt(match[1]);
-              highestLevel = Math.max(highestLevel, levelValue);
-              card.level = highestLevel;
+            if (match && !($(element).attr("style").includes("display: none;"))) {
+              highestLevel++;
+              console.log(card.name + " " + highestLevel);
             }
-          });
+         });
+          card.level = highestLevel;
       }
+    }
 
       const imagePath = $(cardElement).find(".pic").attr("src");
       const n2 = parseInt(path.basename(imagePath).split(".")[0]);
